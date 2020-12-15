@@ -6,15 +6,30 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2020/11 | Hexo</title>
+  <title>文件系统 EXT2 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/2020/11/index.html">
+  <meta name="description" content="关于文件系统 EXT2 的内容读取">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件系统 EXT2">
+<meta property="og:url" content="http://example.com/2020/12/10/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="关于文件系统 EXT2 的内容读取">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/EXT2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/EXT2_GitMind.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/SuperBlockStructure.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/s_log_block_size_AND_s_inodes_per_group.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/BlockGroupDescriptor.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/bg_inode_table.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/inodeStructure.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/theFirstInode.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/i_block.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/i_block_structure.png">
+<meta property="article:published_time" content="2020-12-10T08:36:33.000Z">
+<meta property="article:modified_time" content="2020-12-15T13:07:02.922Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/EXT2.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -150,49 +165,248 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-文件系统" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/11/18/hello-world/" class="archive-article-date">
-  	<time datetime="2020-11-18T12:17:58.941Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-11-18</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/11/18/hello-world/">Hello World</a>
+    <h1 class="article-title" itemprop="name">
+      文件系统 EXT2
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
+        
+        <a href="/2020/12/10/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="archive-article-date">
+  	<time datetime="2020-12-10T08:36:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-12-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <font face = "YaHei Consolas Hybrid">  
 
+
+<p><img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/EXT2.png" alt="EXT2_Structure"></p>
+<a id="more"></a>
+
+
+
+<p><img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/EXT2_GitMind.png"></p>
+<h4 id="1、首先找到-superblock-并获得相关数据"><a href="#1、首先找到-superblock-并获得相关数据" class="headerlink" title="1、首先找到 superblock, 并获得相关数据:"></a>1、首先找到 superblock, 并获得相关数据:</h4><ol>
+<li><p>因为 BootBlock 的大小是 1K, 因而第一个群组(BlockGroup)在 1K = 0x400 处</p>
+</li>
+<li><p>找到 superblock 中的 <code>s_log_block_zise</code> 和 <code>s_inodes_per_group</code> </p>
+<p> <img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/SuperBlockStructure.png" alt="SuperBlockStructure"></p>
+<p> <img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/s_log_block_size_AND_s_inodes_per_group.png" alt="s_log_block_size 和 s_inodes_per_group"></p>
+</li>
+<li><p>每个块大小是 1K = 1024 &lt;&lt; s_log_block_size<br>每个群组 inode 数量是 2048 = 0x0800</p>
+<h4 id="2、在-GroupDescriptor-中-读取该-Group-的信息-求出此块群的-inode-table-所在位置"><a href="#2、在-GroupDescriptor-中-读取该-Group-的信息-求出此块群的-inode-table-所在位置" class="headerlink" title="2、在 GroupDescriptor 中, 读取该 Group 的信息, 求出此块群的 inode table 所在位置:"></a>2、在 GroupDescriptor 中, 读取该 Group 的信息, 求出此块群的 inode table 所在位置:</h4></li>
+<li><p>计算 GroupDescriptor 的位置</p>
+<ul>
+<li><p><strong>GroupDescriptor 的 offset = max{2048, 1024 &lt;&lt; s_log_block_zise}</strong></p>
+</li>
+<li><p>若块的 size 等于 1K, 则 offset 为固定值 2K = 0x800</p>
+</li>
+<li><p>若块的 size 大于 1K, 则 offset 即为块的大小, 如 4K = 0x1000</p>
+</li>
+<li><p>GroupDescriptor 不是紧跟 SuperBlock 的, 可能会空白一段, 并在后面每个 BlockGroup 都依此, 就如块的大小是 4K 时, (Group 0 的) GroupDescriptor 在 4K = 0x1000 的位置, 但是 BootBlock + SuperBlock 只有 2K, 2K 至 4K 的位置就可能是空白的, 且在后面的群组全部依此 </p>
+<blockquote>
+<p>The block group descriptor table starts on the first block following the superblock. This would be the third block on a 1KiB block file system, or the second block for 2KiB and larger block file systems. Shadow copies of the block group descriptor table are also stored with every copy of the superblock</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>找到 GroupDescriptor 中的 <code>bg_inode_table</code></p>
+<p> <img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/BlockGroupDescriptor.png" alt="BlockGroupDescriptor"></p>
+<p> <img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/bg_inode_table.png" alt="bg_inode_table"></p>
+<ul>
+<li><p>0xa4: GroupDescriptor 中 <code>bg_inode_table</code> 的值, 表示 inode table 的起始块号</p>
+<p>0x400: 每个 block 的大小, 已在上一步求得</p>
+</li>
+</ul>
+</li>
+<li><p>由此求出此块群的 inode table 所在块号: 0xa4(块号) * 0x400(块的大小) = 0x29000 </p>
+<blockquote>
+<p>There is one inode table per block group and it can be located by reading the bg_inode_table in its associated group descriptor. There are s_inodes_per_group inodes per table.</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="3、在-inode-table-中-找到对应的-inode-记录-得到此-inode-的-i-block-15-数组-由这些块号得到此文件的”普通数据”"><a href="#3、在-inode-table-中-找到对应的-inode-记录-得到此-inode-的-i-block-15-数组-由这些块号得到此文件的”普通数据”" class="headerlink" title="3、在 inode table 中, 找到对应的 inode 记录, 得到此 inode 的 i_block [15] 数组. 由这些块号得到此文件的”普通数据”."></a>3、在 inode table 中, 找到对应的 inode 记录, 得到此 inode 的 i_block [15] 数组. 由这些块号得到此文件的”普通数据”.</h4><ol>
+<li><p>找到对应的 inode 和 <code>i_block[15]</code></p>
+<ul>
+<li><p>注: inode table 从 1 开始计数</p>
+<p><img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/inodeStructure.png" alt="InodeStructure" title="前12个为直接块号, 后3个为间接块号  "></p>
+<p><img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/theFirstInode.png" alt="theFirstInode" title="可见每个 InodeTable 大小是 128 Bytes"></p>
+<p><img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/i_block.png" alt="i_block"></p>
+<p>(0x01a4(块号) * 0x400(块的大小) = 0x69000)  </p>
+<p><img src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/i_block_structure.png" alt="i_bock structure"></p>
+<p>得此目录的记录为:  </p>
+<table>
+<thead>
+<tr>
+<th align="center">地址</th>
+<th align="center">inode</th>
+<th align="center">记录长度</th>
+<th align="center">文件名长度</th>
+<th align="center">文件类型</th>
+<th align="center">文件名字符数组</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0x69000</td>
+<td align="center">2</td>
+<td align="center">12</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">0x2e,</td>
+</tr>
+<tr>
+<td align="center">0x6900C</td>
+<td align="center">2</td>
+<td align="center">12</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">0x2e, 0x2e</td>
+</tr>
+<tr>
+<td align="center">0x69018</td>
+<td align="center">11</td>
+<td align="center">0x14 = 20</td>
+<td align="center">10</td>
+<td align="center">2</td>
+<td align="center">lost+found</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+</ol>
+</font>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="https://raw.githubusercontent.com/SDaoer/FigureBed/main/img/GitHexo/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2020/12/10/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-  
-    </div></section>
+
   
 
-    
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
+  
+
+  
+
+  
+
+  
 
 
           </div>
@@ -215,8 +429,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
